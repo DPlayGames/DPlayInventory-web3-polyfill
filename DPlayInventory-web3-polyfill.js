@@ -1,14 +1,14 @@
 // 이미 보관함에 의해 생성되었으면 더 이상 생성하지 않습니다.
-if (global.DPlayInventory !== undefined) {
+if (window.DPlayInventory !== undefined) {
 	// ignore.
 }
 
 // 만약 web3 환경도 아니라면
-else if (global.web3 === undefined) {
+else if (window.web3 === undefined) {
 	
 	// DPlay 보관함 설치 안내 띄우기
 	//TODO:
-	console.log('TODO: DPlay 보관함 설치 안내 띄우기');
+	alert('DPlay 보관함을 설치해주시기 바랍니다. (https://inventory.dplay.games)');
 }
 
 else {
@@ -152,7 +152,7 @@ else {
 		}
 	};
 	
-	window.DPlayInventory = () => {
+	window.DPlayInventory = (() => {
 		let self = {};
 		
 		let contracts = {};
@@ -190,10 +190,12 @@ else {
 		
 		// 보관함에 로그인합니다.
 		let login = self.login = (callback) => {
-			//REQUIRED: callback
+			//OPTIONAL: callback
 			
 			ethereum.enable().then(() => {
-				callback();
+				if (callback !== undefined) {
+					callback();
+				}
 			});
 		};
 		
@@ -223,9 +225,9 @@ else {
 				callback = callbackOrHandlers.success;
 			}
 			
-			getAccountId((address) => {
+			getAccountId((accountId) => {
 				
-				web3.personal.sign(text, address.toLowerCase(), (error, hash) => {
+				web3.personal.sign(text, accountId.toLowerCase(), (error, hash) => {
 					
 					// 오류 발생
 					if (error !== TO_DELETE) {
@@ -257,19 +259,40 @@ else {
 			signText(STRINGIFY(sortedData), callbackOrHandlers);
 		};
 		
-		// 계정의 DC 잔고를 가져옵니다.
-		let getDCBalance = self.getDCBalance = () => {
-			//TODO:
-		};
-		
-		// 계정의 d 잔고를 가져옵니다.
-		let getDBalance = self.getDBalance = () => {
-			//TODO:
-		};
-		
 		// 계정의 이더 잔고를 가져옵니다.
-		let getEtherBalance = self.getEtherBalance = () => {
-			//TODO:
+		let getEtherBalance = self.getEtherBalance = (callbackOrHandlers) => {
+			//REQUIRED: callbackOrHandlers
+			//OPTIONAL: callbackOrHandlers.error
+			//REQUIRED: callbackOrHandlers.success
+			
+			let errorHandler;
+			let callback;
+			
+			if (CHECK_IS_DATA(callbackOrHandlers) !== true) {
+				callback = callbackOrHandlers;
+			} else {
+				errorHandler = callbackOrHandlers.error;
+				callback = callbackOrHandlers.success;
+			}
+			
+			getAccountId((accountId) => {
+				
+				web3.eth.getBalance(accountId, (error, balanceBN) => {
+					
+					// 오류 발생
+					if (error !== TO_DELETE) {
+						if (errorHandler === undefined) {
+							SHOW_ERROR('DPlayInventory.getEtherBalance (web3.js polyfill)', error.toString());
+						} else {
+							errorHandler(error.toString());
+						}
+					}
+					
+					else {
+						callback(web3.fromWei(balanceBN.toNumber(), 'ether'));
+					}
+				});
+			});
 		};
 		
 		// 스마트 계약을 배포합니다.
@@ -675,5 +698,5 @@ else {
 		};
 		
 		return self;
-	};
+	})();
 }
