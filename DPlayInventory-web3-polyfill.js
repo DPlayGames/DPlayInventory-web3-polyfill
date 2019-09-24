@@ -326,12 +326,35 @@ else {
 			//REQUIRED: params
 			//REQUIRED: params.abi
 			//REQUIRED: params.address
+			//OPTIONAL: params.onEvent
 			//REQUIRED: callback
 			
 			let abi = params.abi;
 			let address = params.address;
+			let onEvent = params.onEvent;
 			
-			contracts[address] = web3.eth.contract(abi).at(address);
+			let contract = contracts[address] = web3.eth.contract(abi).at(address);
+			
+			if (onEvent !== undefined) {
+				
+				// 계약의 이벤트 핸들링
+				contract.allEvents((error, info) => {
+					if (error === TO_DELETE) {
+						
+						let args = info.args;
+						
+						EACH(info.args, (value, name) => {
+							
+							// 숫자인 경우
+							if (value.toNumber !== undefined) {
+								args[name] = value.toNumber();
+							}
+						});
+						
+						onEvent(info.event, args);
+					}
+				});
+			}
 			
 			let methods = methodMap[address] = {};
 			
