@@ -190,7 +190,10 @@ else {
 		};
 		
 		// 보관함에 로그인합니다.
-		let login = self.login = (callback) => {
+		let login = self.login = (params, callback) => {
+			//REQUIRED: params
+			//REQUIRED: params.icon
+			//REQUIRED: params.title
 			//OPTIONAL: callback
 			
 			ethereum.enable().then(() => {
@@ -233,7 +236,7 @@ else {
 					// 오류 발생
 					if (error !== TO_DELETE) {
 						if (errorHandler === undefined) {
-							SHOW_ERROR('DPlayInventory.sign (web3.js polyfill)', error.toString(), text);
+							SHOW_ERROR('DPlayInventory.signText (web3.js polyfill)', error.toString(), text);
 						} else {
 							errorHandler(error.toString());
 						}
