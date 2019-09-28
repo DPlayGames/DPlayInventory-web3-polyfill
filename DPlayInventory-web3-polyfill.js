@@ -202,6 +202,7 @@ else {
 		
 		let contracts = {};
 		let methodMap = {};
+		let eventMap = {};
 		
 		// 이더리움 네트워크 이름을 가져옵니다.
 		let getNetworkName = self.getNetworkName = (callback) => {
@@ -393,9 +394,22 @@ else {
 						
 						EACH(info.args, (value, name) => {
 							
+							let type;
+							
+							EACH(eventMap[address][info.event].inputs, (input) => {
+								if (input.name === name) {
+									type = input.type;
+								}
+							});
+							
 							// 숫자인 경우
 							if (value.toNumber !== undefined) {
 								args[name] = value.toNumber();
+							}
+							
+							// 주소인 경우
+							else if (type === 'address') {
+								args[name] = web3.toChecksumAddress(value);
 							}
 						});
 						
@@ -405,10 +419,13 @@ else {
 			}
 			
 			let methods = methodMap[address] = {};
+			let events = eventMap[address] = {};
 			
 			// 메소드 분석 및 생성
 			EACH(abi, (methodInfo) => {
-				if (methodInfo.type === 'function') {
+				if (methodInfo.type === 'event') {
+					events[methodInfo.name] = methodInfo;
+				} else if (methodInfo.type === 'function') {
 					methods[methodInfo.name] = methodInfo;
 				}
 			});
@@ -634,6 +651,7 @@ else {
 			//REQUIRED: params.params
 			//REQUIRED: callbackOrHandlers
 			//OPTIONAL: callbackOrHandlers.error
+			//OPTIONAL: callbackOrHandlers.transactionHash
 			//REQUIRED: callbackOrHandlers.success
 			
 			let address = _params.address;
