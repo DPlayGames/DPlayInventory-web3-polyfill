@@ -7,8 +7,7 @@ if (window.DPlayInventory !== undefined) {
 else if (window.web3 === undefined) {
 	
 	// DPlay 보관함 설치 안내 띄우기
-	//TODO:
-	alert('DPlay 보관함을 설치해주시기 바랍니다. (https://inventory.dplay.games)');
+	alert('The game needs DPlay Inventory. Please install DPlay inventory. (https://inventory.dplay.games)');
 }
 
 else {
@@ -780,7 +779,7 @@ else {
 			let contract = contracts[address];
 			let methods = methodMap[address];
 			
-			if (contract !== undefined && methods !== undefined) {
+			if (contract !== undefined && methods !== undefined && methods[methodName] !== undefined) {
 				
 				let methodInfo = methods[methodName];
 				
