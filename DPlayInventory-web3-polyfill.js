@@ -7,7 +7,9 @@ if (window.DPlayInventory !== undefined) {
 else if (window.web3 === undefined) {
 	
 	// DPlay 보관함 설치 안내 띄우기
-	alert('The game needs DPlay Inventory. Please install DPlay inventory. (https://inventory.dplay.games)');
+	alert('The game needs DPlay Inventory. Please install DPlay inventory.');
+	
+	location.href = 'http://inventory.dplay.games';
 }
 
 else {
