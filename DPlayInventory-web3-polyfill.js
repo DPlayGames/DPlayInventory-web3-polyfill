@@ -343,10 +343,7 @@ else {
 		};
 		
 		// 보관함에 로그인합니다.
-		let login = self.login = (params, callback) => {
-			//REQUIRED: params
-			//REQUIRED: params.icon
-			//REQUIRED: params.title
+		let login = self.login = (callback) => {
 			//OPTIONAL: callback
 			
 			ethereum.enable().then(() => {
