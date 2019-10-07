@@ -381,7 +381,7 @@ else {
 			
 			getAccountId((accountId) => {
 				
-				web3.personal.sign(text, accountId.toLowerCase(), (error, hash) => {
+				web3.personal.sign(web3.fromUtf8(text), accountId.toLowerCase(), (error, hash) => {
 					
 					// 오류 발생
 					if (error !== TO_DELETE) {
