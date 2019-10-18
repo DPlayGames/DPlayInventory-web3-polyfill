@@ -462,17 +462,21 @@ else {
 		let addChangeNetworkHandler = self.addChangeNetworkHandler = (changeNetworkHandler) => {
 			//REQUIRED: changeNetworkHandler
 			
-			ethereum.on('networkChanged', () => {
-				changeNetworkHandler();
-			});
+			if (ethereum.on !== undefined) {
+				ethereum.on('networkChanged', () => {
+					changeNetworkHandler();
+				});
+			}
 		};
 		
 		let addChangeAccountHandler = self.addChangeAccountHandler = (changeAccountHandler) => {
 			//REQUIRED: changeAccountHandler
 			
-			ethereum.on('accountsChanged', (accounts) => {
-				changeAccountHandler(accounts[0]);
-			});
+			if (ethereum.on !== undefined) {
+				ethereum.on('accountsChanged', (accounts) => {
+					changeAccountHandler(accounts[0]);
+				});
+			}
 		};
 		
 		// 스마트 계약 인터페이스를 생성합니다.
